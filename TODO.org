@@ -1,0 +1,6 @@
+* TODO add sub-directories for different languages/topics
+  - State "TODO"       from ""           [2011-07-06 Wed 11:14] \\
+    
+    :PROPERTIES:
+    :CUSTOM_ID: 2ae47a95-f6b6-4e9b-b1b7-d5b3e818e1ac
+    :END:
