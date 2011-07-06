@@ -1,0 +1,10 @@
+# ignore emacs backup files
+*~
+\#*\#
+.\#*
+
+# emacs desktop files
+.emacs.desktop
+.emacs.desktop.lock
+
+*.pyc
