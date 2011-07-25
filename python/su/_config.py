@@ -13,11 +13,12 @@ import su.utils
 
 local_config = None
 
-def publish(patterns=[]):
+def publish(fileName,pattern):
     """perform 'publishing' actions on files corresponding to patterns
 
     ARGUMENTS:
-    * patterns: iterable of glob-like patterns
+    * fileName: one of the files matching pattern
+    * pattern: glob-like pattern
     """
-    local_config.publish(patterns)
+    local_config.publish(fileName,pattern)
 
