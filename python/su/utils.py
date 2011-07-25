@@ -149,13 +149,26 @@ def getPublishingPatterns(patterns=[]):
                                     ])
     if not patterns:
         root = findNearestRoot()
-        patternFile = os.path.join(root,'publish.patterns')
+        cwd = os.getcwd()
+        patternFileName = 'publish.patterns'
+        patternPrefix = None
+
+        patternFile = os.path.join(root,patternFileName)
+        if os.path.exists(patternFile):
+            patternPrefix = root
+        else:
+            patternFile = os.path.join(cwd,patternFileName)
+        if os.path.exists(patternFile):
+            patternPrefix = cwd
+
         patterns = readlines(patternFile)
     for pattern in patterns:
         patternBits = pattern.split(':')
-        src = os.path.join(root,patternBits[0])
+        src = os.path.join(patternPrefix,patternBits[0])
         if src.split(os.path.sep)[-1] in ['.','..']:
             continue
+        else:
+            src = os.path.abspath(src)
         try:
             chmod = int(patternBits[1])
         except:
