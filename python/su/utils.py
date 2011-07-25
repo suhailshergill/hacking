@@ -154,6 +154,8 @@ def getPublishingPatterns(patterns=[]):
     for pattern in patterns:
         patternBits = pattern.split(':')
         src = patternBits[0]
+        if src.split(os.path.sep)[-1] in ['.','..']:
+            continue
         try:
             chmod = int(patternBits[1])
         except:
