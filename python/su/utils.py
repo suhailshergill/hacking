@@ -238,7 +238,7 @@ class PublishingRule(object):
         #     if commandPrefix:
         #         os.system('%schown shergill:shergill %s'%(commandPrefix,self.src))
         # elif os.path.exists(self.dest):
-        if os.path.exists(self.dest):
+        if os.path.exists(self.dest) and os.path.islink(self.dest):
             _runCommand('%srm "%s"'%(commandPrefix,self.dest))
 
         _runCommand(command_line)
