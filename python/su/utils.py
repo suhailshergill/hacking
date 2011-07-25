@@ -153,7 +153,7 @@ def getPublishingPatterns(patterns=[]):
         patterns = readlines(patternFile)
     for pattern in patterns:
         patternBits = pattern.split(':')
-        src = patternBits[0]
+        src = os.path.join(root,patternBits[0])
         if src.split(os.path.sep)[-1] in ['.','..']:
             continue
         try:
