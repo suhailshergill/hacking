@@ -12,7 +12,7 @@ HOME = os.getenv('HOME')
 # options #
 ###########
 defaultOptions = {
-    'debug' : True,
+    'debug' : False,
     }
 
 def getOptionParser(args='',debug=defaultOptions['debug']):
