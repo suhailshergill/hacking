@@ -20,5 +20,6 @@ def publish(fileName,pattern):
     * fileName: one of the files matching pattern
     * pattern: glob-like pattern
     """
-    local_config.publish(fileName,pattern)
+    if hasattr(local_config,'publish'):
+        local_config.publish(fileName,pattern)
 
