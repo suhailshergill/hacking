@@ -162,6 +162,8 @@ def getPublishingPatterns(patterns=[]):
             patternPrefix = cwd
 
         patterns = readlines(patternFile)
+    else:
+        patterns = [x.strip() for x in patterns]
     for pattern in patterns:
         patternBits = pattern.split(':')
         src = os.path.join(patternPrefix,patternBits[0])
