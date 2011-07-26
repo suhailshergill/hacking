@@ -114,6 +114,17 @@ def findNearestRoot():
     """
     ans = findNearestFile('.venv')
     return ans if ans else CWD
+
+def findNearestSconsRoot():
+    """finds nearest SConstruct file lying at or below 'root'. else returns None
+    """
+    scons = findNearestFile('SConstruct')
+    if scons:
+        root = findNearestRoot()
+        if os.path.commonprefix([scons,root])!=root:
+            scons = None
+    return scons
+
 def config_init():
     """init and return the result of appropriate config file.
 
