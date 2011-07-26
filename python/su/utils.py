@@ -147,11 +147,11 @@ def getPublishingPatterns(patterns=[]):
                                     'owner',
                                     'group',
                                     ])
+    cwd = os.getcwd()
+    patternPrefix = cwd
     if not patterns:
         root = findNearestRoot()
-        cwd = os.getcwd()
         patternFileName = 'publish.patterns'
-        patternPrefix = None
 
         patternFile = os.path.join(root,patternFileName)
         if os.path.exists(patternFile):
