@@ -93,21 +93,27 @@ def __getImmediateRoot(depth=1):
     callingFileName = os.path.realpath(getCallingFileName(depth+1))
     return os.path.abspath(os.path.join(callingFileName,'..','..'))
 
+
+def findNearestFile(fileName):
+    """scans up from pwd to / all the while looking to see if a fileName
+    exists. if it finds one it outputs that directory, if not it outputs None.
+    """
+    curr = CWD
+    while curr != "/":
+        if os.path.isfile(os.path.join(curr,fileName)):
+            break
+        curr = os.path.dirname(curr)
+    else:
+        curr = None
+    return curr
+
 def findNearestRoot():
     """scans up from pwd to / all the while looking to see if a .venv file
     exists. if it finds one it outputs that directory, if not it outputs the
     current working directory.
     """
-    cwd = os.getcwd()
-    curr = cwd
-    while curr != "/":
-        if os.path.isfile(os.path.join(curr,'.venv')):
-            break
-        curr = os.path.dirname(curr)
-    else:
-        curr = cwd
-    return curr
-
+    ans = findNearestFile('.venv')
+    return ans if ans else CWD
 def config_init():
     """init and return the result of appropriate config file.
 
