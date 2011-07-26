@@ -7,6 +7,7 @@ from collections import namedtuple
 
 hostname = socket.gethostname()
 HOME = os.getenv('HOME')
+CWD = os.getcwd()
 
 ###########
 # options #
@@ -147,7 +148,7 @@ def getPublishingPatterns(patterns=[]):
                                     'owner',
                                     'group',
                                     ])
-    cwd = os.getcwd()
+    cwd = CWD
     patternPrefix = cwd
     if not patterns:
         root = findNearestRoot()
