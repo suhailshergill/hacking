@@ -5,14 +5,14 @@ import sys
 
 from collections import namedtuple
 
-hostname = socket.gethostname()
 HOME = os.getenv('HOME')
+CWD = os.getcwd()
 
 ###########
 # options #
 ###########
 defaultOptions = {
-    'debug' : True,
+    'debug' : False,
     }
 
 def getOptionParser(args='',debug=defaultOptions['debug']):
@@ -92,41 +92,37 @@ def __getImmediateRoot(depth=1):
     callingFileName = os.path.realpath(getCallingFileName(depth+1))
     return os.path.abspath(os.path.join(callingFileName,'..','..'))
 
+
+def findNearestFile(fileName):
+    """scans up from pwd to / all the while looking to see if a fileName
+    exists. if it finds one it outputs that directory, if not it outputs None.
+    """
+    curr = CWD
+    while curr != "/":
+        if os.path.isfile(os.path.join(curr,fileName)):
+            break
+        curr = os.path.dirname(curr)
+    else:
+        curr = None
+    return curr
+
 def findNearestRoot():
     """scans up from pwd to / all the while looking to see if a .venv file
     exists. if it finds one it outputs that directory, if not it outputs the
     current working directory.
     """
-    cwd = os.getcwd()
-    curr = cwd
-    while curr != "/":
-        if os.path.isfile(os.path.join(curr,'.venv')):
-            break
-        curr = os.path.dirname(curr)
-    else:
-        curr = cwd
-    return curr
+    ans = findNearestFile('.venv')
+    return ans if ans else CWD
 
-def config_init():
-    """init and return the result of appropriate config file.
-
-    ASSUMES:
-    * it is being called from somewhere within the hierarchy (and not invoked
-    from without)
-
-    RETURNS:
-    * the result of calling main in the 'appropriate' config file
+def findNearestSconsRoot():
+    """finds nearest SConstruct file lying at or below 'root'. else returns None
     """
-    import su._config
-    
-    callingRoot = findNearestRoot()
-    local_config = __import__('config',
-                              fromlist=[os.path.basename(callingRoot)])
-    if hasattr(local_config,'main'):
-        su._config.local_config = local_config.main()
-    else:
-        su._config.local_config = local_config
-    return su._config
+    scons = findNearestFile('SConstruct')
+    if scons:
+        root = findNearestRoot()
+        if os.path.commonprefix([scons,root])!=root:
+            scons = None
+    return scons
 
 
 ####################
@@ -147,7 +143,7 @@ def getPublishingPatterns(patterns=[]):
                                     'owner',
                                     'group',
                                     ])
-    cwd = os.getcwd()
+    cwd = CWD
     patternPrefix = cwd
     if not patterns:
         root = findNearestRoot()
