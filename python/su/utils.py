@@ -193,12 +193,11 @@ def NonNill(*positions):
 
 def NormalizePublishingRuleArgs(f):
     def innerFun(self,src,*args):
-        root = findNearestRoot()
         new_args = []
         def _foo(x,y):
             new_arg = None
             if hasattr(y,'__call__'):
-                new_arg = y(x,root)
+                new_arg = y(x)
             else:
                 new_arg = y
             new_args.append(new_arg)
