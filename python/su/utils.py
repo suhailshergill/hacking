@@ -226,7 +226,7 @@ class PublishingRule(object):
     def __str__(self):
         return str(self.__dict__)
 
-    def publish(self, debug=True):
+    def publish(self, debug=defaultOptions['debug']):
         def _runCommand(command_line):
             print command_line
             if not debug:
