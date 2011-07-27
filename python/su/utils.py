@@ -5,7 +5,6 @@ import sys
 
 from collections import namedtuple
 
-hostname = socket.gethostname()
 HOME = os.getenv('HOME')
 CWD = os.getcwd()
 
@@ -124,27 +123,6 @@ def findNearestSconsRoot():
         if os.path.commonprefix([scons,root])!=root:
             scons = None
     return scons
-
-def config_init():
-    """init and return the result of appropriate config file.
-
-    ASSUMES:
-    * it is being called from somewhere within the hierarchy (and not invoked
-    from without)
-
-    RETURNS:
-    * the result of calling main in the 'appropriate' config file
-    """
-    import su._config
-    
-    callingRoot = findNearestRoot()
-    local_config = __import__('config',
-                              fromlist=[os.path.basename(callingRoot)])
-    if hasattr(local_config,'main'):
-        su._config.local_config = local_config.main()
-    else:
-        su._config.local_config = local_config
-    return su._config
 
 
 ####################
