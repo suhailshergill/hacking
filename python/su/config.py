@@ -9,15 +9,12 @@ _config = __import__('config')
 os.chdir(su.utils.CWD)
 
 
-class Config(object):
-    """This is the parent class from which all base configurations derive. In
-    c++ lingo this is an abstract class. Specific doc follows:
-    ===========================================================================
-
+class Config(_config.LocalConfig):
+    """This is the global Configuration class which dynamically derives from the
+    pertinent local configuration.
     """
-    __metaclass__ = _config.LocalConfig
 
-    def __init__(self):
+    def __init__(self, *args, **kw):
         Config.root = su.utils.findNearestRoot()
         Config.CWD = su.utils.CWD
         Config.HOME = su.utils.HOME
@@ -26,8 +23,5 @@ class Config(object):
         Config.options = defaultOptions
         Config.utils = su.utils
 
-        for propName, propVal in Config.__dict__['__metaclass__'].__dict__.iteritems():
-            if not propName.startswith('_'):
-                setattr(Config, propName, propVal)
-                # Config.__setattr__(self, propName, propVal)
-        setattr(Config,'__doc__',Config.__doc__+Config.__dict__['__metaclass__'].__doc__)
+        super(Config, self).__init__(*args, **kw)
+        setattr(self,'__doc__',super(Config,self).__doc__)
