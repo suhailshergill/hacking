@@ -241,6 +241,8 @@ class PublishingRule(object):
             command = 'ln -s'
         else:
             command = 'cp'
+        if not os.path.isdir(os.path.dirname(self.dest)):
+            _runCommand('%smkdir -p "%s"'%(commandPrefix,os.path.dirname(self.dest)))
         command_line = '%s%s "%s" "%s"'%(commandPrefix,command,self.src,self.dest)
         # FIXME: delete this case. only using it temporarily
         # if os.path.exists(self.dest) and not os.path.islink(self.dest):
@@ -295,6 +297,15 @@ def getBrowser(debug=defaultOptions['debug']):
     # Follows refresh 0 but not hangs on refresh > 0
     br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=1)
 
+    ##############
+    # enable TOR #
+    ##############
+    try:
+        br.set_proxies({'http':'localhost:8118'})
+        br.open('http://www.google.com')
+    except URLError as e:
+        br.set_proxies({})
+
     if debug:
         # Want debugging messages?
         br.set_debug_http(True)
@@ -321,6 +332,12 @@ def convertXMLToCSV(inputFile,outputFile):
     from lxml import etree
     # [[http://www.saltycrane.com/blog/2008/11/python-unicodeencodeerror-ascii-codec-cant-encode-character/][source]]
     from django.utils.encoding import smart_str, smart_unicode
+    # using smart_str works because of correct locale settings. if, say, $LANG
+    # was *not* equal to 'en_US.UTF-8' the interpretation of smart_str (which
+    # returns a bytestring encoding of utf-8 encoded strings by default) into
+    # characters may go awry. For cross platform compatibility we probably want
+    # to use something like
+    # [[http://docs.python.org/howto/unicode.html#reading-and-writing-unicode-data][unicode IO]]
 
     with open(inputFile,'r') as ifile:
         exportedFile = ifile.read()
