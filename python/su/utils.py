@@ -283,6 +283,15 @@ def getBrowser(debug=defaultOptions['debug']):
     # Browser
     br = mechanize.Browser()
 
+    ##############
+    # enable TOR #
+    ##############
+    try:
+        br.set_proxies({'http':'localhost:8118'})
+        br.open('http://www.l.google.com')
+    except mechanize.URLError as e:
+        br.set_proxies({})
+
     # Cookie Jar
     cj = cookielib.LWPCookieJar()
     br.set_cookiejar(cj)
@@ -296,15 +305,6 @@ def getBrowser(debug=defaultOptions['debug']):
 
     # Follows refresh 0 but not hangs on refresh > 0
     br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=1)
-
-    ##############
-    # enable TOR #
-    ##############
-    try:
-        br.set_proxies({'http':'localhost:8118'})
-        br.open('http://www.google.com')
-    except mechanize.URLError as e:
-        br.set_proxies({})
 
     if debug:
         # Want debugging messages?
