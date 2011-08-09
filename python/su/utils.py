@@ -303,7 +303,7 @@ def getBrowser(debug=defaultOptions['debug']):
     try:
         br.set_proxies({'http':'localhost:8118'})
         br.open('http://www.google.com')
-    except URLError as e:
+    except mechanize.URLError as e:
         br.set_proxies({})
 
     if debug:
