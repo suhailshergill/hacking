@@ -80,7 +80,8 @@ def clearErrorCache():
     """
     callingFileName = os.path.basename(getCallingFileName(2))
     errorFile = os.path.join(errorDir,callingFileName)
-    os.remove(errorFile)
+    if os.path.exists(errorFile):
+        os.remove(errorFile)
 
 ###########
 # file IO #
