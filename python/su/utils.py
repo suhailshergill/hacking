@@ -7,6 +7,7 @@ from collections import namedtuple
 
 HOME = os.getenv('HOME')
 CWD = os.getcwd()
+errorDir = os.path.join(HOME,'.error')
 
 ###########
 # options #
@@ -47,9 +48,39 @@ def getCallingFileName(depth=1):
     * depth: defaults to 1, i.e., get filename of function calling this function
     """
     import inspect
-    return changeFileExtension(inspect.getfile(sys._getframe(depth)),'py')
+    return replaceFileExtension(inspect.getfile(sys._getframe(depth)),'pyc','py')
 
+def raiseError(exception):
+    """make a cache of last error and only raise error if previous error is
+    different from current error. this is especially handy for cron jobs where
+    you want to avoid flooding your inbox if the same error is repeating
+    itself.
 
+    in the event of successful execution (i.e., when there is no exception, be
+    sure to call clearErrorCache()
+
+    TODO: make the invocation of clearErrorCache() somehow automatic
+    """
+    callingFileName = os.path.basename(getCallingFileName(2))
+    errorFile = os.path.join(errorDir,callingFileName)
+    if not os.path.exists(errorFile):
+        open(errorFile,'w').close()
+    newError = exception.__repr__()
+    cachedError = ''
+    with open(errorFile,'r') as ifile:
+        cachedError = ifile.read()
+    if cachedError != newError:
+        with open(errorFile,'w') as ofile:
+            ofile.write(newError)
+        raise exception
+
+def clearErrorCache():
+    """call this method in the event of successful execution, i.e., in the
+    'else' clause corresponding to the try clause in which raiseError is called
+    """
+    callingFileName = os.path.basename(getCallingFileName(2))
+    errorFile = os.path.join(errorDir,callingFileName)
+    os.remove(errorFile)
 
 ###########
 # file IO #
@@ -368,3 +399,14 @@ def changeFileExtension(fileName,newExtension):
         portions[-1] = newExtension
         return '.'.join(portions)
 
+def getFileExtension(fileName):
+    portions = fileName.split('.')
+    if len(portions) == 1:
+        return None
+    return portions[-1]
+
+def replaceFileExtension(fileName,oldExtension,newExtension):
+    if getFileExtension(fileName) == oldExtension:
+        return changeFileExtension(fileName,newExtension)
+    else:
+        return fileName
