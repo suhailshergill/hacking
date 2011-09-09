@@ -44,7 +44,7 @@ def storeKeyring(data,keyringFile=keyringFile,gpg=gpg):
     gpg : gnupg.GPG
     """
     pickleData = pickle.dumps(data)
-    fingerprint = gpg.list_keys()[0]['fingerprint']
+    fingerprint = gpg.list_keys(True)[0]['fingerprint']
     result = gpg.encrypt(pickleData,fingerprint)
 
     with open(keyringFile,'w') as ofile:
