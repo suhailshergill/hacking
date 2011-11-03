@@ -91,9 +91,12 @@ def readlines(fileName):
     """removes trailing newlines in lines read from file
     """
     ans = []
-    with open(fileName,'r') as ifile:
-        for line in ifile:
-            ans.append(line.strip())
+    try:
+        with open(fileName,'r') as ifile:
+            for line in ifile:
+                ans.append(line.strip())
+    except IOError as e:
+        pass
     return ans
 
 def getOwner(fileName):
