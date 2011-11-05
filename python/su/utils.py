@@ -306,7 +306,7 @@ def isFileRemoved(fileName):
 ################
 # web browsing #
 ################
-def getBrowser(debug=defaultOptions['debug']):
+def getBrowser(TOR=True, debug=defaultOptions['debug']):
     """Get an instantiation of a mechanize browser with custom settings.
 
     ARGUMENTS:
@@ -321,10 +321,13 @@ def getBrowser(debug=defaultOptions['debug']):
     ##############
     # enable TOR #
     ##############
-    try:
-        br.set_proxies({'http':'localhost:8118'})
-        br.open('http://www.l.google.com')
-    except mechanize.URLError as e:
+    if TOR:
+        try:
+            br.set_proxies({'http':'localhost:8118'})
+            br.open('http://www.l.google.com')
+        except mechanize.URLError as e:
+            br.set_proxies({})
+    else:
         br.set_proxies({})
 
     # Cookie Jar
