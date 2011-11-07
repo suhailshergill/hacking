@@ -501,19 +501,18 @@ def readify(body, url, sanitize=lambda x: x, browser=getBrowser(False)):
                 return etree.tostring(child)
             else:
                 return None
-    returnContent = sanitize(getreadifyContent(body))
+    returnContent = getreadifyContent(body)
     if not returnContent:
         if url:
             try:
-                urlbody = browser.open(url).read()
+                urlbody = browser.open(fixurl(url)).read()
             except Exception as e:
-                import ipdb; ipdb.set_trace()
-                logging.critical('Exception: %s'%e.reason)
-                returnContent = sanitize(body)
-            returnContent = sanitize(body) + sanitize('\n\n') + sanitize(getreadifyContent(urlbody))
                 logging.critical('Exception: %s'%str(e))
+                returnContent = body
+            returnContent = str(body) + '\n\n' + getreadifyContent(urlbody)
         else:
-            returnContent = sanitize(body)
+            returnContent = body
+    returnContent = sanitize(returnContent)
     # debugging
 
     # trouble urls:
