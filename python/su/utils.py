@@ -456,7 +456,7 @@ def readify(body, url, sanitize=lambda x: x, browser=getBrowser(False)):
         try:
             urlbody = browser.open(url).read()
         except Exception as e:
-            logging.critical('Exception: %s'%e.message)
+            logging.critical('Exception: %s'%e.reason)
             return sanitize(body)
         return sanitize(body) + sanitize('\n\n') + sanitize(getreadifyContent(urlbody))
     else:
