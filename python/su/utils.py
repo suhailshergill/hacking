@@ -4,6 +4,7 @@ import socket
 import sys
 
 from collections import namedtuple
+from lxml import etree
 
 HOME = os.getenv('HOME')
 CWD = os.getcwd()
@@ -367,7 +368,6 @@ def getBrowser(TOR=True, debug=defaultOptions['debug']):
 # format conversion #
 #####################
 def convertXMLToCSV(inputFile,outputFile):
-    from lxml import etree
     # [[http://www.saltycrane.com/blog/2008/11/python-unicodeencodeerror-ascii-codec-cant-encode-character/][source]]
     from django.utils.encoding import smart_str, smart_unicode
     # using smart_str works because of correct locale settings. if, say, $LANG
@@ -417,3 +417,44 @@ def replaceFileExtension(fileName,oldExtension,newExtension):
         return changeFileExtension(fileName,newExtension)
     else:
         return fileName
+
+
+###############
+# readability #
+###############
+def readify(body, url, sanitize=lambda x: x, browser=getBrowser(False)):
+        """call readability on body. either return properly santized results
+        (text or html) from that call or return url
+        """
+        from readability.readability import Document
+        import html2text
+        def getreadifyContent(body):
+                body = body.strip()
+                if body:
+                        bodyreadify = Document(body).summary()
+                else:
+                        return None
+                dom = etree.HTML(bodyreadify)
+                children = dom.getchildren()
+                # usually [body,div] the body is empty and div has the content,
+                # but this bug may be fixed in the future so need to guard
+                # against that
+                child = children[-1]
+                if child.tag == 'div':
+                        return etree.tostring(child)
+                elif child.tag == 'body':
+                        innerchildren = child.getchildren()
+                        if len(innerchildren)==1 and innerchildren[0].tag!='a' or len(innerchildren)>1:
+                                child.tag = 'div'
+                                return etree.tostring(child)
+                        else:
+                                return None
+        bodyreadifyContent = getreadifyContent(body)
+        if bodyreadifyContent:
+                return sanitize(bodyreadifyContent)
+        else:
+                try:
+                        urlbody = browser.open(url).read()
+                except Exception as e:
+                        return sanitize(body)
+                return sanitize(body) + sanitize('\n\n') + sanitize(getreadifyContent(urlbody))
