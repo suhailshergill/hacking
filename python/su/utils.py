@@ -518,7 +518,6 @@ def readify(body, url, sanitize=lambda x: x, browser=getBrowser(False)):
     # trouble urls:
     # u'http://techcrunch.com/2011/11/06/schmidt-right-google\u2019s-glory-days-numbered/'
     if returnContent == 'None':
-        import ipdb; ipdb.set_trace()
         logging.critical('readifyContent is None')
         logging.critical('original body: \n%s'%body)
         logging.critical('url: %s'%url)
