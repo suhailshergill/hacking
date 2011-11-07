@@ -449,15 +449,27 @@ def readify(body, url, sanitize=lambda x: x, browser=getBrowser(False)):
                 return etree.tostring(child)
             else:
                 return None
-    bodyreadifyContent = getreadifyContent(body)
-    if bodyreadifyContent:
-        return sanitize(bodyreadifyContent)
-    elif url:
-        try:
-            urlbody = browser.open(url).read()
-        except Exception as e:
-            logging.critical('Exception: %s'%e.reason)
-            return sanitize(body)
-        return sanitize(body) + sanitize('\n\n') + sanitize(getreadifyContent(urlbody))
-    else:
-        return sanitize(body)
+    returnContent = sanitize(getreadifyContent(body))
+    if not returnContent:
+        if url:
+            try:
+                urlbody = browser.open(url).read()
+            except Exception as e:
+                import ipdb; ipdb.set_trace()
+                logging.critical('Exception: %s'%e.reason)
+                returnContent = sanitize(body)
+            returnContent = sanitize(body) + sanitize('\n\n') + sanitize(getreadifyContent(urlbody))
+        else:
+            returnContent = sanitize(body)
+    # debugging
+
+    # trouble urls:
+    # u'http://techcrunch.com/2011/11/06/schmidt-right-google\u2019s-glory-days-numbered/'
+    if returnContent == 'None':
+        import ipdb; ipdb.set_trace()
+        logging.critical('readifyContent is None')
+        logging.critical('original body: \n%s'%body)
+        logging.critical('url: %s'%url)
+        logging.critical('===============================')
+    return returnContent
+
