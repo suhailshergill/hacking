@@ -423,38 +423,41 @@ def replaceFileExtension(fileName,oldExtension,newExtension):
 # readability #
 ###############
 def readify(body, url, sanitize=lambda x: x, browser=getBrowser(False)):
-        """call readability on body. either return properly santized results
-        (text or html) from that call or return url
-        """
-        from readability.readability import Document
-        import html2text
-        def getreadifyContent(body):
-                body = body.strip()
-                if body:
-                        bodyreadify = Document(body).summary()
-                else:
-                        return None
-                dom = etree.HTML(bodyreadify)
-                children = dom.getchildren()
-                # usually [body,div] the body is empty and div has the content,
-                # but this bug may be fixed in the future so need to guard
-                # against that
-                child = children[-1]
-                if child.tag == 'div':
-                        return etree.tostring(child)
-                elif child.tag == 'body':
-                        innerchildren = child.getchildren()
-                        if len(innerchildren)==1 and innerchildren[0].tag!='a' or len(innerchildren)>1:
-                                child.tag = 'div'
-                                return etree.tostring(child)
-                        else:
-                                return None
+    """call readability on body. either return properly santized results
+    (text or html) from that call or return url
+    """
+    from readability.readability import Document
+    import html2text
+    def getreadifyContent(body):
+        body = body.strip()
+        if body:
+            bodyreadify = Document(body).summary()
+        else:
+            return None
+        dom = etree.HTML(bodyreadify)
+        children = dom.getchildren()
+        # usually [body,div] the body is empty and div has the content,
+        # but this bug may be fixed in the future so need to guard
+        # against that
+        child = children[-1]
+        if child.tag == 'div':
+            return etree.tostring(child)
+        elif child.tag == 'body':
+            innerchildren = child.getchildren()
+            if len(innerchildren)==1 and innerchildren[0].tag!='a' or len(innerchildren)>1:
+                child.tag = 'div'
+                return etree.tostring(child)
+            else:
+                return None
         bodyreadifyContent = getreadifyContent(body)
         if bodyreadifyContent:
-                return sanitize(bodyreadifyContent)
+            return sanitize(bodyreadifyContent)
+        elif url:
+            try:
+                urlbody = browser.open(url).read()
+            except Exception as e:
+                logging.critical('Exception: %s'%e.message)
+                return sanitize(body)
+            return sanitize(body) + sanitize('\n\n') + sanitize(getreadifyContent(urlbody))
         else:
-                try:
-                        urlbody = browser.open(url).read()
-                except Exception as e:
-                        return sanitize(body)
-                return sanitize(body) + sanitize('\n\n') + sanitize(getreadifyContent(urlbody))
+            return sanitize(body)
