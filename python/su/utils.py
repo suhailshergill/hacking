@@ -474,7 +474,7 @@ def replaceFileExtension(fileName,oldExtension,newExtension):
 ###############
 # readability #
 ###############
-def readify(body, url, sanitize=lambda x: x, browser=getBrowser(False)):
+def readify(body, url=None, sanitize=lambda x: x, browser=getBrowser(False)):
     """call readability on body. either return properly santized results
     (text or html) from that call or return url
     """
