@@ -501,6 +501,7 @@ def readify(body, url, sanitize=lambda x: x, browser=getBrowser(False)):
                 logging.critical('Exception: %s'%e.reason)
                 returnContent = sanitize(body)
             returnContent = sanitize(body) + sanitize('\n\n') + sanitize(getreadifyContent(urlbody))
+                logging.critical('Exception: %s'%str(e))
         else:
             returnContent = sanitize(body)
     # debugging
