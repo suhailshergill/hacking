@@ -452,10 +452,12 @@ def readify(body, url, sanitize=lambda x: x, browser=getBrowser(False)):
     bodyreadifyContent = getreadifyContent(body)
     if bodyreadifyContent:
         return sanitize(bodyreadifyContent)
-    else:
+    elif url:
         try:
             urlbody = browser.open(url).read()
         except Exception as e:
             logging.critical('Exception: %s'%e.message)
             return sanitize(body)
         return sanitize(body) + sanitize('\n\n') + sanitize(getreadifyContent(urlbody))
+    else:
+        return sanitize(body)
