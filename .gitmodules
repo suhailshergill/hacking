@@ -1,0 +1,3 @@
+[submodule "python/others/readability"]
+	path = python/others/readability
+	url = shergill@chaos:~/git/github/SW/python-readability.git
