@@ -363,6 +363,14 @@ def getBrowser(TOR=True, debug=defaultOptions['debug']):
     return br
 
 
+# [[http://stackoverflow.com/questions/196345/how-to-check-if-a-string-in-python-is-in-ascii][source]]
+def is_ascii(s):
+    try:
+        s.decode('ascii')
+    except UnicodeError:
+        return False
+    else:
+        return True
 
 # [[http://stackoverflow.com/questions/804336/best-way-to-convert-a-unicode-url-to-ascii-utf-8-percent-escaped-in-python][source]]
 # TODO:
@@ -370,6 +378,8 @@ def getBrowser(TOR=True, debug=defaultOptions['debug']):
 def fixurl(url):
     """Convert unicode url to ascii
     """
+    if is_ascii(url): return url
+
     import urlparse, urllib
     # turn string into unicode
     if not isinstance(url,unicode):
