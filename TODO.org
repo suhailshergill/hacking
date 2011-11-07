@@ -4,3 +4,11 @@
     :PROPERTIES:
     :CUSTOM_ID: 2ae47a95-f6b6-4e9b-b1b7-d5b3e818e1ac
     :END:
+* TODO invoke su.utils.fixurl automatically from su.utils.getBrowser()
+  - State "TODO"       from ""           [2011-11-07 Mon 08:42] \\
+    
+    [[file:python/su/utils.py::def%20fixurl][su.utils.fixurl]]
+    
+    :PROPERTIES:
+    :CUSTOM_ID: 1354c9a9-0945-4ec8-8949-054df7b68216
+    :END:
