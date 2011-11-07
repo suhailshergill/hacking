@@ -363,6 +363,58 @@ def getBrowser(TOR=True, debug=defaultOptions['debug']):
     return br
 
 
+# [[http://stackoverflow.com/questions/196345/how-to-check-if-a-string-in-python-is-in-ascii][source]]
+def is_ascii(s):
+    try:
+        s.decode('ascii')
+    except UnicodeError:
+        return False
+    else:
+        return True
+
+# [[http://stackoverflow.com/questions/804336/best-way-to-convert-a-unicode-url-to-ascii-utf-8-percent-escaped-in-python][source]]
+# TODO:
+# [[file:~/workspace/hacking/TODO.org::#1354c9a9-0945-4ec8-8949-054df7b68216][TODO]]
+def fixurl(url):
+    """Convert unicode url to ascii
+    """
+    if is_ascii(url): return url
+
+    import urlparse, urllib
+    # turn string into unicode
+    if not isinstance(url,unicode):
+        url = url.decode('utf8')
+
+    # parse it
+    parsed = urlparse.urlsplit(url)
+
+    # divide the netloc further
+    userpass,at,hostport = parsed.netloc.partition('@')
+    user,colon1,pass_ = userpass.partition(':')
+    host,colon2,port = hostport.partition(':')
+
+    # encode each component
+    scheme = parsed.scheme.encode('utf8')
+    user = urllib.quote(user.encode('utf8'))
+    colon1 = colon1.encode('utf8')
+    pass_ = urllib.quote(pass_.encode('utf8'))
+    at = at.encode('utf8')
+    host = host.encode('idna')
+    colon2 = colon2.encode('utf8')
+    port = port.encode('utf8')
+    path = '/'.join(  # could be encoded slashes!
+        urllib.quote(urllib.unquote(pce).encode('utf8'),'')
+        for pce in parsed.path.split('/')
+    )
+    query = urllib.quote(urllib.unquote(parsed.query).encode('utf8'),'=&?/')
+    fragment = urllib.quote(urllib.unquote(parsed.fragment).encode('utf8'))
+
+    # put it back together
+    netloc = ''.join((user,colon1,pass_,at,host,colon2,port))
+    return urlparse.urlunsplit((scheme,netloc,path,query,fragment))
+
+
+
 
 #####################
 # format conversion #
@@ -449,15 +501,26 @@ def readify(body, url, sanitize=lambda x: x, browser=getBrowser(False)):
                 return etree.tostring(child)
             else:
                 return None
-        bodyreadifyContent = getreadifyContent(body)
-        if bodyreadifyContent:
-            return sanitize(bodyreadifyContent)
-        elif url:
+    returnContent = getreadifyContent(body)
+    if not returnContent:
+        if url:
             try:
-                urlbody = browser.open(url).read()
+                urlbody = browser.open(fixurl(url)).read()
             except Exception as e:
-                logging.critical('Exception: %s'%e.message)
-                return sanitize(body)
-            return sanitize(body) + sanitize('\n\n') + sanitize(getreadifyContent(urlbody))
+                logging.critical('Exception: %s'%str(e))
+                returnContent = body
+            returnContent = str(body) + '\n\n' + getreadifyContent(urlbody)
         else:
-            return sanitize(body)
+            returnContent = body
+    returnContent = sanitize(returnContent)
+    # debugging
+
+    # trouble urls:
+    # u'http://techcrunch.com/2011/11/06/schmidt-right-google\u2019s-glory-days-numbered/'
+    if returnContent == 'None':
+        import ipdb; ipdb.set_trace()
+        logging.critical('readifyContent is None')
+        logging.critical('original body: \n%s'%body)
+        logging.critical('url: %s'%url)
+        logging.critical('===============================')
+    return returnContent
