@@ -9,7 +9,7 @@ def mechanize_Browser_open(self, *args, **kw):
     browser._open). This function monkey patches the read method for the request
     object which always gives uncompressed output.
     
-    Adds a _read method to request object which holds original data.
+    Adds a _compress object to request object which holds original data.
     """
     # This is monkeypatching was needed coz some sites seem to ignore the
     # request header which specifies what content encoding is acceptable to
