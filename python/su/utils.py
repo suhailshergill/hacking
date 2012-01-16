@@ -6,6 +6,8 @@ import sys
 from collections import namedtuple
 from lxml import etree
 
+import monkeypatching
+
 HOME = os.getenv('HOME')
 CWD = os.getcwd()
 errorDir = os.path.join(HOME,'.error')
