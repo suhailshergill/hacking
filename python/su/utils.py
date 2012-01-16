@@ -492,7 +492,7 @@ def readify(body, url=None, sanitize=lambda x: x, browser=getBrowser(False)):
         # but this bug may be fixed in the future so need to guard
         # against that
         child = children[-1]
-        if child.tag == 'div':
+        if child.tag in ['div', 'article']:
             return etree.tostring(child)
         elif child.tag == 'body':
             innerchildren = child.getchildren()
