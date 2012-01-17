@@ -6,6 +6,8 @@ import sys
 from collections import namedtuple
 from lxml import etree
 
+import monkeypatching
+
 HOME = os.getenv('HOME')
 CWD = os.getcwd()
 errorDir = os.path.join(HOME,'.error')
@@ -492,7 +494,7 @@ def readify(body, url=None, sanitize=lambda x: x, browser=getBrowser(False)):
         # but this bug may be fixed in the future so need to guard
         # against that
         child = children[-1]
-        if child.tag == 'div':
+        if child.tag in ['div', 'article']:
             return etree.tostring(child)
         elif child.tag == 'body':
             innerchildren = child.getchildren()
@@ -509,7 +511,8 @@ def readify(body, url=None, sanitize=lambda x: x, browser=getBrowser(False)):
             except Exception as e:
                 logging.critical('Exception: %s'%str(e))
                 returnContent = body
-            returnContent = str(body) + '\n\n' + getreadifyContent(urlbody)
+            else:
+                returnContent = str(body) + '\n\n' + str(getreadifyContent(urlbody))
         else:
             returnContent = body
     returnContent = sanitize(returnContent)
