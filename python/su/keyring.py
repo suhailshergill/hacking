@@ -72,11 +72,13 @@ def loadKeyring(keyringFile=keyringFile,gpg=gpg):
 
 
 def setPassword(domain,username,password,keyringFile=keyringFile,gpg=gpg):
-    """Store username,password pair for a domain in keyring
+    """Store username,password pair for a domain in keyring. Returns newly set
+    password.
     """
     keyring = loadKeyring(keyringFile,gpg)
     keyring[domain][username] = password
     storeKeyring(keyring, keyringFile, gpg)
+    return password
 
 
 def getPassword(domain,username,keyringFile=keyringFile,gpg=gpg):
