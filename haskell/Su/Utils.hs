@@ -5,6 +5,7 @@ module Su.Utils where
 import System.Environment (getEnv)
 import qualified Control.Monad.State.Lazy as S
 import qualified Data.Map as M
+import qualified Data.Typeable as T
 
 safeReadFile :: FilePath -> IO String
 safeReadFile = mkSafe readFile
@@ -42,3 +43,9 @@ data AnyShow = forall s. Show s => AS s
 deriving instance Show (AnyShow) -- this wraps the AS constructor =/
 showIt :: AnyShow -> String
 showIt (AS s) = show s
+
+quoteArgs :: (Show a, T.Typeable a) => a -> String
+quoteArgs x = if (T.typeOf x == T.typeOf "")
+                   then show x -- adds the quotes we need
+                   else show . show $ x -- one to convert it to string, and the
+                                        -- other to properly quote it
