@@ -39,5 +39,6 @@ memoizeM t x = S.evalState (f x) M.empty where
 
 
 data AnyShow = forall s. Show s => AS s
-deriving instance Show (AnyShow)
+deriving instance Show (AnyShow) -- this wraps the AS constructor =/
+showIt :: AnyShow -> String
 showIt (AS s) = show s
