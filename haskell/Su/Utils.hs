@@ -1,3 +1,5 @@
+{-# LANGUAGE ExistentialQuantification, StandaloneDeriving #-}
+
 module Su.Utils where
 
 import System.Environment (getEnv)
@@ -34,3 +36,8 @@ memoizeM t x = S.evalState (f x) M.empty where
     S.put $ M.insert x y m
     return $ y
   f x = S.get >>= \m -> maybe (g x) return (M.lookup x m)
+
+
+data AnyShow = forall s. Show s => AS s
+deriving instance Show (AnyShow)
+showIt (AS s) = show s
