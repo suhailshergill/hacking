@@ -51,7 +51,7 @@ showIt :: AnyShow -> String
 showIt (AS s) = show s
 
 quoteArgs :: (Show a, T.Typeable a) => a -> String
-quoteArgs x = if (T.typeOf x == T.typeOf "")
+quoteArgs x = if (T.typeOf x == T.typeOf ("" :: String))
                    then show x -- adds the quotes we need
                    else show . show $ x -- one to convert it to string, and the
                                         -- other to properly quote it
