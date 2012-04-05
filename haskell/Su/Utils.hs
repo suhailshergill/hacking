@@ -1,7 +1,13 @@
 {-# LANGUAGE ExistentialQuantification, StandaloneDeriving #-}
 
-module Su.Utils where
+module Su.Utils
+       ( safeReadFile
+       , safeGetEnv
+       , tmpDir
+       , quoteArgs
+       ) where
 
+import Prelude
 import System.Environment (getEnv)
 import qualified Control.Monad.State.Lazy as S
 import qualified Data.Map as M
