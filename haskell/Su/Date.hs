@@ -6,11 +6,10 @@ module Su.Date
        ) where
 
 import Prelude
-import Data.Time.Format (readTime, formatTime)
+import Data.Time.Format (readTime)
 import System.Locale (defaultTimeLocale)
-import Data.Time.Clock (UTCTime, utctDayTime, getCurrentTime)
-import Data.Time.LocalTime (TimeZone, getTimeZone)
-import Data.List.Split (splitOn)
+import Data.Time.Clock (UTCTime)
+import Data.Time.LocalTime (getTimeZone)
 
 parseOrgDate :: String -> UTCTime
 parseOrgDate = readTime defaultTimeLocale "%F %a %R"
