@@ -11,7 +11,7 @@ import Su.Utils
 main = do
   args <- getArgs
   case args of
-    mode:custom_id:entered_on:heading_:tags -> do
+    mode:custom_id:entered_on:heading_:hasMath:tags -> do
       enteredOn <- fromOrgDateGetLocal entered_on
       (_,_,_,process) <- createProcess (proc "/usr/bin/ssh"
                                         (["chaos",
@@ -19,7 +19,8 @@ main = do
                                           quoteArgs mode,
                                           quoteArgs custom_id,
                                           quoteArgs enteredOn,
-                                          quoteArgs heading_]
+                                          quoteArgs heading_,
+                                          quoteArgs hasMath]
                                          ++ tags)
                                        )
       waitForProcess process
@@ -28,4 +29,3 @@ main = do
       name <- getProgName
       hPutStrLn stderr $ "usage: " ++ name ++ " customID enteredOn heading [tags]"
       exitFailure
-
