@@ -8,6 +8,7 @@ module Su.Utils
        ) where
 
 import Prelude
+import Control.Exception as E
 import System.Environment (getEnv)
 import qualified Control.Monad.State.Lazy as S
 import qualified Data.Map as M
@@ -29,19 +30,19 @@ tmpDir = do
 mkSafe = mkSafe2 []
 
 mkSafe2 :: defaultValType -> (a -> IO defaultValType) -> a -> IO defaultValType
-mkSafe2 = (.) . flip catch . const . return
-
+mkSafe2 d f x = E.handle (\SomeException{} -> return d) (f x)
 
 type StateMap a b = S.State (M.Map a b) b
 
 memoizeM :: (Show a, Show b, Ord a) =>
-            ((a -> StateMap a b) -> (a -> StateMap a b)) -> (a -> b)
+            ((a -> StateMap a b) -> (a -> StateMap a b))
+            -> a -> b
 memoizeM t x = S.evalState (f x) M.empty where
   g x = do
     y <- t f x
     m <- S.get
     S.put $ M.insert x y m
-    return $ y
+    return y
   f x = S.get >>= \m -> maybe (g x) return (M.lookup x m)
 
 
