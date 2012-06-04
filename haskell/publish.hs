@@ -11,15 +11,19 @@ import Su.Utils
 main = do
   args <- getArgs
   case args of
-    custom_id:entered_on:heading_:tags -> do
+    mode:custom_id:entered_on:updated_on:heading_:hasMath:tags -> do
       enteredOn <- fromOrgDateGetLocal entered_on
+      updatedOn <- fromOrgDateGetLocal updated_on
       (_,_,_,process) <- createProcess (proc "/usr/bin/ssh"
                                         (["chaos",
-                                          "~/tmp/publish" ,
+                                          "cd ~/virtualEnvs/blog/src/blog;../../.virthualenv/cabal/bin/publish-entry" ,
+                                          quoteArgs mode,
                                           quoteArgs custom_id,
                                           quoteArgs enteredOn,
-                                          quoteArgs heading_]
-                                         ++ map quoteArgs tags)
+                                          quoteArgs updatedOn,
+                                          quoteArgs heading_,
+                                          quoteArgs hasMath]
+                                         ++ tags)
                                        )
       waitForProcess process
 
@@ -27,4 +31,3 @@ main = do
       name <- getProgName
       hPutStrLn stderr $ "usage: " ++ name ++ " customID enteredOn heading [tags]"
       exitFailure
-
