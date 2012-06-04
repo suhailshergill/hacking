@@ -21,10 +21,10 @@ safeGetEnv = mkSafe System.Environment.getEnv
 
 tmpDir :: IO FilePath
 tmpDir = do
-  tmpDir <- safeGetEnv "TMPDIR"
-  if tmpDir == "" 
+  tmpDir_ <- safeGetEnv "TMPDIR"
+  if tmpDir_ == ""
     then return "/tmp"
-    else return tmpDir
+    else return tmpDir_
 
 mkSafe :: (a -> IO [a1]) -> a -> IO [a1]
 mkSafe = mkSafe2 []
@@ -35,15 +35,15 @@ mkSafe2 = (.) . flip catch . const . return
 
 type StateMap a b = S.State (M.Map a b) b
 
-memoizeM :: (Show a, Show b, Ord a) => 
+memoizeM :: (Show a, Show b, Ord a) =>
             ((a -> StateMap a b) -> (a -> StateMap a b)) -> (a -> b)
 memoizeM t x = S.evalState (f x) M.empty where
-  g x = do
-    y <- t f x  
+  g x_ = do
+    y <- t f x_
     m <- S.get
-    S.put $ M.insert x y m
+    S.put $ M.insert x_ y m
     return $ y
-  f x = S.get >>= \m -> maybe (g x) return (M.lookup x m)
+  f x_ = S.get >>= \m -> maybe (g x_) return (M.lookup x_ m)
 
 
 data AnyShow = forall s. Show s => AS s
