@@ -26,6 +26,7 @@ tmpDir = do
     then return "/tmp"
     else return tmpDir
 
+mkSafe :: (a -> IO [a1]) -> a -> IO [a1]
 mkSafe = mkSafe2 []
 
 mkSafe2 :: defaultValType -> (a -> IO defaultValType) -> a -> IO defaultValType
