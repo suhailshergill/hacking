@@ -8,6 +8,7 @@ module Su.Utils
        ) where
 
 import Prelude
+import Control.Exception as E
 import System.Environment (getEnv)
 import qualified Control.Monad.State.Lazy as S
 import qualified Data.Map as M
@@ -30,8 +31,7 @@ mkSafe :: (a -> IO [a1]) -> a -> IO [a1]
 mkSafe = mkSafe2 []
 
 mkSafe2 :: defaultValType -> (a -> IO defaultValType) -> a -> IO defaultValType
-mkSafe2 = (.) . flip catch . const . return
-
+mkSafe2 d f x = E.handle (\SomeException{} -> return d) (f x)
 
 type StateMap a b = S.State (M.Map a b) b
 
@@ -52,7 +52,7 @@ showIt :: AnyShow -> String
 showIt (AS s) = show s
 
 quoteArgs :: (Show a, T.Typeable a) => a -> String
-quoteArgs x = if (T.typeOf x == T.typeOf ("" :: String))
-                   then show x -- adds the quotes we need
-                   else show . show $ x -- one to convert it to string, and the
-                                        -- other to properly quote it
+quoteArgs x
+  | T.typeOf x == T.typeOf ("" :: String) = show x -- adds the quotes we need
+  | otherwise = show . show $ x -- one to convert it to string, and the other to
+                                -- properly quote it
