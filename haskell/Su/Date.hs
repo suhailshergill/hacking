@@ -26,5 +26,5 @@ fromOrgDateGetLocal ts = do
   return $! parseOrgDateTz $ ts ++ " " ++ (show tz)
 
 
-main = do
-  fromOrgDateGetLocal "2011-06-16 Thu 01:59"
+-- main = do
+--   fromOrgDateGetLocal "2011-06-16 Thu 01:59"
