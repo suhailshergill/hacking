@@ -27,6 +27,9 @@ tmpDir = do
     then return "/tmp"
     else return tmpDir_
 
+homeDir :: IO FilePath
+homeDir = safeGetEnv "HOME"
+
 mkSafe :: (a -> IO [a1]) -> a -> IO [a1]
 mkSafe = mkSafe2 []
 
