@@ -1,3 +1,6 @@
 [submodule "python/others/readability"]
 	path = python/others/readability
 	url = shergill@chaos:~/git/github/SW/python-readability.git
+[submodule "vm"]
+	path = vm
+	url = git://github.com/suhailshergill/vm.git
