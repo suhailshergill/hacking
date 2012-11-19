@@ -3,4 +3,4 @@
 	url = shergill@chaos:~/git/github/SW/python-readability.git
 [submodule "vm"]
 	path = vm
-	url = git://github.com/suhailshergill/vm.git
+	url = git@github.com:suhailshergill/vm.git
